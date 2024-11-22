@@ -3,7 +3,7 @@ name: Deploy Application
 on:
   push:
     branches:
-      - main 
+      - devops/container 
 jobs:
   deploy:
     runs-on: [self-hosted, Linux]
