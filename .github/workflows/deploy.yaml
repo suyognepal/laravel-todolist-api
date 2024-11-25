@@ -23,13 +23,23 @@ jobs:
 
       - name: Rsync Deployments via Bash
         run: |
-         echo "GitHub Workspace: ${{ github.workspace }}"
+          echo "GitHub Workspace: ${{ github.workspace }}"
+          echo "Deploying to ${{ secrets.DEPLOY_HOST }}"
+      
+          echo "${{ secrets.DEPLOY_KEY }}" > deploy_key.pem
+          chmod 600 deploy_key.pem
+      
+          # Rsync command to deploy files
           rsync -avzr --delete --progress \
-            -e "ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEPLOY_KEY }} -p ${{ secrets.DEPLOY_PORT }}" \
+            -e "ssh -o StrictHostKeyChecking=no -i deploy_key.pem -p ${{ secrets.DEPLOY_PORT }}" \
             ${{ github.workspace }}/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
+      
+          # Clean up the private key
+          rm deploy_key.pem
+      
           echo "Rsync deployment completed successfully."
-        shell: bash
+      
         
 
       - name: Debug Workspace Contents
