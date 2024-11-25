@@ -21,7 +21,7 @@ jobs:
             -e "ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEPLOY_KEY }} -p ${{ secrets.DEPLOY_PORT }}" \
             ${{ github.workspace }}/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
-          echo "Rsync deployment completed successfully.
+          echo "Rsync deployment completed successfully."
         shell: bash
       
       
