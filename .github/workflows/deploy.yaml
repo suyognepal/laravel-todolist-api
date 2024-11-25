@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - devops/container
-
+    
 jobs:
   deploy:
     runs-on: [self-hosted, Linux]
@@ -13,22 +13,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Deploy via Rsync
-        run: |
-          echo "Starting Rsync deployment..."
-          rsync -avz --progress \
-            -e "ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEPLOY_KEY }} -p ${{ secrets.DEPLOY_PORT }}" \
-            --exclude=".git" \
-            --exclude="node_modules" \
-            --exclude="vendor" \
-            ${{ github.workspace }}/ \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
-          echo "Rsync deployment completed successfully."
+
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: ../laravel-todolist-api
+          remote_path: ${{ secrets.DEPLOY_PATH }}
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Debug Workspace Contents
         run: |
           echo "Workspace Directory: ${{ github.workspace }}"
-          ls -la ${{ github.workspace }}
+          ls -la 
+          pwd
 
       - name: Run Laravel Commands
         uses: appleboy/ssh-action@v1.2.0
