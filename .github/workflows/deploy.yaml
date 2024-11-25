@@ -16,7 +16,7 @@ jobs:
       - name: Rsync Deployments
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avVzr
+          switches: -avvzr
           path: ${{ github.workspace }}
           remote_path: /var/www/laravel-todolist-api/
           remote_host: ${{ secrets.DEPLOY_HOST }}
