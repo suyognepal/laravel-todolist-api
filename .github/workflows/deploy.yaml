@@ -13,14 +13,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Debug Workspace Contents
-        run: |
-          echo "Workspace Directory: ${{ github.workspace }}"
-          ls -la 
-          pwd
-        shell: bash
-
-
       - name: Rsync Deployments via Bash
         run: |
           echo "GitHub Workspace: ${{ github.workspace }}"
@@ -29,7 +21,6 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY }}" > deploy_key.pem
           chmod 600 deploy_key.pem
       
-          # Rsync command to deploy files
           rsync -avzr --delete --progress \
             -e "ssh -o StrictHostKeyChecking=no -i deploy_key.pem -p ${{ secrets.DEPLOY_PORT }}" \
             --exclude 'vendor/' \
@@ -37,19 +28,9 @@ jobs:
             ${{ github.workspace }}/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
 
-      
-          # Clean up the private key
-          rm deploy_key.pem
-      
+          rm deploy_key.pem      
           echo "Rsync deployment completed successfully."
-      
-        
-
-      - name: Debug Workspace Contents
-        run: |
-          echo "Workspace Directory: ${{ github.workspace }}"
-          ls -la 
-          pwd
+        shell: bash
 
       - name: Run Laravel Commands
         uses: appleboy/ssh-action@v1.2.0
@@ -66,3 +47,4 @@ jobs:
             php artisan route:cache
             php artisan view:cache
             php artisan migrate --force
+          shell: bash
